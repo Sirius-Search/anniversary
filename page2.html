@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Anniversary Page 2</title>
+<style>
+  body {
+    margin: 0;
+    background: #141414;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* HERO FEATURE */
+  .hero {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    overflow: hidden;
+  }
+  .hero img#main-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(to top, rgba(20,20,20,0.95), transparent);
+    z-index: 1;
+  }
+  .title {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 3;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+  }
+
+  /* CORNER PHOTO INSIDE HERO */
+  .corner-photo {
+    position: absolute;
+    bottom: 20px; /* above title */
+    right: 20px;
+    width: 180px;
+    max-height: 120px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 0 15px rgba(229, 9, 20, 0.8);
+    z-index: 3;
+  }
+
+  /* CATEGORY BUTTONS */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    padding: 10px 20px;
+    overflow-x: auto;
+    background: #141414;
+  }
+  .filter-btn {
+    background: #333;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: #e50914;
+  }
+
+  /* INFINITE SCROLL ROW */
+  .scrolling-row-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 130px;
+    margin: 15px 20px;
+  }
+  .scrolling-row {
+    display: flex;
+    gap: 10px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 130px;
+  }
+  .photo {
+    flex: 0 0 auto;
+    width: 180px;
+    height: 130px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #e50914;
+    z-index: 10;
+  }
+
+  /* EXIT BUTTON */
+  #exit-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #e50914;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 5;
+  }
+  #exit-btn:hover {
+    background: #b0060f;
+  }
+
+  /* MODAL */
+  #modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  #modal-content {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    gap: 20px;
+    max-width: 90%;
+    flex-wrap: wrap;
+  }
+  #modal img {
+    max-width: 300px;
+    border-radius: 10px;
+  }
+  #modal-close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 30px;
+    cursor: pointer;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .corner-photo {
+      width: 120px;
+      max-height: 80px;
+      bottom: 70px;
+      right: 10px;
+    }
+    .title { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <img src="images/bus1.jpg" id="main-photo" alt="Featured">
+  <div class="title" id="main-title">Bus Date 1</div>
+  <img src="images/bus1.jpg" id="corner-photo" class="corner-photo" alt="Corner Photo">
+</div>
+
+<!-- CATEGORIES -->
+<div class="filter-bar">
+  <button class="filter-btn active" data-category="All">All</button>
+  <button class="filter-btn" data-category="Bus Date">Bus Date</button>
+  <button class="filter-btn" data-category="Coffee Date">Coffee Date</button>
+  <button class="filter-btn" data-category="Park Date">Park Date</button>
+  <button class="filter-btn" data-category="Hotpot Date">Hotpot Date</button>
+  <button class="filter-btn" data-category="Zoo Date">Zoo Date</button>
+  <button class="filter-btn" data-category="Movie Date">Movie Date</button>
+  <button class="filter-btn" data-category="Pagoda Date">Pagoda Date</button>
+</div>
+
+<!-- PHOTOS ROW -->
+<div class="scrolling-row-wrapper">
+  <div class="scrolling-row" id="scrolling-row"></div>
+</div>
+
+<!-- EXIT BUTTON -->
+<button id="exit-btn">Exit Website</button>
+
+<!-- MODAL -->
+<div id="modal">
+  <div id="modal-close">&times;</div>
+  <div id="modal-content">
+    <img id="clicked-photo" src="">
+    <img id="gift-card" src="">
+  </div>
+</div>
+
+<script>
+const photos = [
+  ...Array.from({length:5},(_,i)=>({src:`images/bus${i+1}.jpg`,category:"Bus Date",gift:`images/gift-bus${i+1}.jpg`,title:`Bus Date ${i+1}`})),
+  ...Array.from({length:3},(_,i)=>({src:`images/coffee${i+1}.jpg`,category:"Coffee Date",gift:`images/gift-coffee${i+1}.jpg`,title:`Coffee Date ${i+1}`})),
+  ...Array.from({length:7},(_,i)=>({src:`images/park${i+1}.jpg`,category:"Park Date",gift:`images/gift-park${i+1}.jpg`,title:`Park Date ${i+1}`})),
+  ...Array.from({length:2},(_,i)=>({src:`images/hotpot${i+1}.jpg`,category:"Hotpot Date",gift:`images/gift-hotpot${i+1}.jpg`,title:`Hotpot Date ${i+1}`})),
+  ...Array.from({length:4},(_,i)=>({src:`images/zoo${i+1}.jpg`,category:"Zoo Date",gift:`images/gift-zoo${i+1}.jpg`,title:`Zoo Date ${i+1}`})),
+  ...Array.from({length:4},(_,i)=>({src:`images/movie${i+1}.jpg`,category:"Movie Date",gift:`images/gift-movie${i+1}.jpg`,title:`Movie Date ${i+1}`})),
+  ...Array.from({length:4},(_,i)=>({src:`images/pagoda${i+1}.jpg`,category:"Pagoda Date",gift:`images/gift-pagoda${i+1}.jpg`,title:`Pagoda Date ${i+1}`}))
+];
+
+const mainPhoto=document.getElementById('main-photo');
+const cornerPhoto=document.getElementById('corner-photo');
+const mainTitle=document.getElementById('main-title');
+const scrollingRow=document.getElementById('scrolling-row');
+const filterBtns=document.querySelectorAll('.filter-btn');
+const modal=document.getElementById('modal');
+const modalClose=document.getElementById('modal-close');
+const clickedPhoto=document.getElementById('clicked-photo');
+const giftCard=document.getElementById('gift-card');
+const exitBtn=document.getElementById('exit-btn');
+
+let currentPhotos=[...photos];
+let scrollX=0;
+let scrollSpeed=0.5;
+
+function renderPhotos(list){
+  scrollingRow.innerHTML='';
+  const doubled=list.concat(list);
+  doubled.forEach(photo=>{
+    const div=document.createElement('div');
+    div.className='photo';
+    const img=document.createElement('img');
+    img.src=photo.src;
+    div.appendChild(img);
+    div.addEventListener('mouseenter',()=>{
+      mainPhoto.src=photo.src;
+      cornerPhoto.src=photo.src;
+      mainTitle.textContent=photo.title;
+    });
+    div.addEventListener('click',()=>{
+      clickedPhoto.src=photo.src;
+      giftCard.src=photo.gift;
+      modal.style.display='flex';
+    });
+    scrollingRow.appendChild(div);
+  });
+}
+
+function scrollLoop(){
+  scrollX-=scrollSpeed;
+  if(Math.abs(scrollX)>=scrollingRow.scrollWidth/2) scrollX=0;
+  scrollingRow.style.transform=`translateX(${scrollX}px)`;
+  requestAnimationFrame(scrollLoop);
+}
+
+filterBtns.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    filterBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentPhotos=btn.dataset.category==="All"?photos:photos.filter(p=>p.category===btn.dataset.category);
+    renderPhotos(currentPhotos);
+  });
+});
+
+modalClose.addEventListener('click',()=>modal.style.display='none');
+exitBtn.addEventListener('click',()=>location.href='page3.html');
+
+renderPhotos(currentPhotos);
+scrollLoop();
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Anniversary Lock Screen</title>
+<style>
+  body {
+    margin: 0; background: #000; color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100vh;
+  }
+  .time {
+    font-size: 80px;
+    font-weight: 200;
+    margin-bottom: 0;
+  }
+  .date {
+    font-size: 24px;
+    font-weight: 300;
+    margin-top: 0;
+    margin-bottom: 50px;
+  }
+  .passcode-input {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid #fff;
+    outline: none;
+    font-size: 40px;
+    color: #fff;
+    width: 150px;
+    text-align: center;
+    letter-spacing: 12px;
+  }
+  .unlock-message {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #f55;
+    height: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="time" id="time">--:--</div>
+<div class="date" id="date">Loading date...</div>
+
+<input
+  type="password"
+  maxlength="4"
+  placeholder="Enter code"
+  class="passcode-input"
+  id="passcode"
+  autofocus
+/>
+
+<div class="unlock-message" id="message"></div>
+
+<script>
+  function updateTime() {
+    const now = new Date();
+    let h = now.getHours();
+    let m = now.getMinutes();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    const hh = h < 10 ? '0' + h : h;
+    const mm = m < 10 ? '0' + m : m;
+    document.getElementById('time').textContent = `${hh}:${mm} ${ampm}`;
+    
+    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+    const formattedDate = now.toLocaleDateString(undefined, options);
+    document.getElementById('date').textContent = formattedDate;
+  }
+  updateTime();
+  setInterval(updateTime, 60000);
+
+  const passcodeInput = document.getElementById('passcode');
+  const messageDiv = document.getElementById('message');
+
+  passcodeInput.addEventListener('input', () => {
+    if (passcodeInput.value.length === 4) {
+      if (passcodeInput.value === '0728') {
+        messageDiv.style.color = '#0f0';
+        messageDiv.textContent = 'Unlocked! Redirecting...';
+        setTimeout(() => {
+          window.location.href = 'page2.html'; // Link to Netflix-style home screen page
+        }, 1500);
+      } else {
+        messageDiv.style.color = '#f55';
+        messageDiv.textContent = 'Wrong code, try again.';
+        passcodeInput.value = '';
+      }
+    } else {
+      messageDiv.textContent = '';
+    }
+  });
+</script>
+
+</body>
+</html>
