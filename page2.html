@@ -212,7 +212,7 @@
 </div>
 
 <script>
-const categoryGiftCards = {
+const categoryGifts = {
   "Bus Date": "images/gift-bus.jpg",
   "Coffee Date": "images/gift-coffee.jpg",
   "Park Date": "images/gift-park.jpg",
@@ -223,13 +223,13 @@ const categoryGiftCards = {
 };
 
 const photos = [
-  ...Array.from({length:5},(_,i)=>({src:`images/bus${i+1}.jpg`,category:"Bus Date",title:`Bus Date ${i+1}`})),
-  ...Array.from({length:3},(_,i)=>({src:`images/coffee${i+1}.jpg`,category:"Coffee Date",title:`Coffee Date ${i+1}`})),
-  ...Array.from({length:7},(_,i)=>({src:`images/park${i+1}.jpg`,category:"Park Date",title:`Park Date ${i+1}`})),
-  ...Array.from({length:2},(_,i)=>({src:`images/hotpot${i+1}.jpg`,category:"Hotpot Date",title:`Hotpot Date ${i+1`})),
-  ...Array.from({length:4},(_,i)=>({src:`images/zoo${i+1}.jpg`,category:"Zoo Date",title:`Zoo Date ${i+1`})),
-  ...Array.from({length:4},(_,i)=>({src:`images/movie${i+1}.jpg`,category:"Movie Date",title:`Movie Date ${i+1`})),
-  ...Array.from({length:4},(_,i)=>({src:`images/pagoda${i+1}.jpg`,category:"Pagoda Date",title:`Pagoda Date ${i+1`}))
+  ...Array.from({length:5},(_,i)=>({src:`images/bus${i+1}.jpg`,category:"Bus Date",gift:categoryGifts["Bus Date"],title:`Bus Date ${i+1}`})),
+  ...Array.from({length:3},(_,i)=>({src:`images/coffee${i+1}.jpg`,category:"Coffee Date",gift:categoryGifts["Coffee Date"],title:`Coffee Date ${i+1}`})),
+  ...Array.from({length:7},(_,i)=>({src:`images/park${i+1}.jpg`,category:"Park Date",gift:categoryGifts["Park Date"],title:`Park Date ${i+1}`})),
+  ...Array.from({length:2},(_,i)=>({src:`images/hotpot${i+1}.jpg`,category:"Hotpot Date",gift:categoryGifts["Hotpot Date"],title:`Hotpot Date ${i+1}`})),
+  ...Array.from({length:4},(_,i)=>({src:`images/zoo${i+1}.jpg`,category:"Zoo Date",gift:categoryGifts["Zoo Date"],title:`Zoo Date ${i+1}`})),
+  ...Array.from({length:4},(_,i)=>({src:`images/movie${i+1}.jpg`,category:"Movie Date",gift:categoryGifts["Movie Date"],title:`Movie Date ${i+1}`})),
+  ...Array.from({length:4},(_,i)=>({src:`images/pagoda${i+1}.jpg`,category:"Pagoda Date",gift:categoryGifts["Pagoda Date"],title:`Pagoda Date ${i+1}`}))
 ];
 
 const mainPhoto=document.getElementById('main-photo');
@@ -263,7 +263,7 @@ function renderPhotos(list){
     });
     div.addEventListener('click',()=>{
       clickedPhoto.src=photo.src;
-      giftCard.src=categoryGiftCards[photo.category];
+      giftCard.src=photo.gift;
       modal.style.display='flex';
     });
     scrollingRow.appendChild(div);
